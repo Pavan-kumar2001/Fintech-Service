@@ -181,40 +181,36 @@ All other requests          →  Authorization: Bearer <token>
 
 ## 🗂️ API Overview
 
-Auth APIs
-Login User — Authenticate a user using mobile + password and receive a JWT token for subsequent requests.
-Register User — Create a new account (default role: VIEWER).
+| **Category**         | **API**                        | **Description**                                        |
+| -------------------- | ------------------------------ | ------------------------------------------------------ |
+| **Auth APIs**        | Login User                     | Authenticate with mobile + password; receive JWT token |
+|                      | Register User                  | Create a new account (default role: VIEWER)            |
+| **User APIs**        | Create User                    | Add a new user                                         |
+|                      | Get All Users                  | List all users (with optional pagination)              |
+|                      | Get User by ID                 | Retrieve specific user info                            |
+|                      | Update User Role               | Change user role (Admin only)                          |
+|                      | Update User Status             | Activate/deactivate account (Admin only)               |
+|                      | Delete User                    | Soft delete user (Admin only)                          |
+| **Transaction APIs** | Create Transaction             | Add new financial record (income/expense)              |
+|                      | Get All Transactions           | List transactions with filters/pagination              |
+|                      | Get Transaction by ID          | Fetch a specific transaction                           |
+|                      | Get Transactions by User ID    | Transactions of a user                                 |
+|                      | Get My Transactions            | Transactions of logged-in user                         |
+|                      | Get Transactions by Date Range | Filter by fromDate / toDate                            |
+|                      | Update Transaction             | Modify transaction details                             |
+|                      | Soft Delete Transaction        | Mark transaction as deleted                            |
+| **Dashboard APIs**   | Get Overall Summary            | System-wide aggregated statistics (Admin/Analyst)      |
+|                      | Get Overall Category Totals    | Category-wise totals across system                     |
+|                      | Get Overall Monthly Trends     | Monthly transaction trends (Admin/Analyst)             |
+|                      | Get Summary by User            | Aggregated data for specific user                      |
+|                      | Get Categories by User         | Category totals for a user                             |
+|                      | Get Monthly Trend by User      | Monthly trends for a user                              |
+|                      | Get My Summary                 | Personalized summary for logged-in user                |
+|                      | Get My Categories              | Category totals for logged-in user                     |
+|                      | Get My Trends                  | Monthly trends for logged-in user                      |
+|                      | Get My Recent                  | Latest transactions for logged-in user                 |
+|                      | Export CSV                     | Download transactions/summary as CSV                   |
 
-User APIs
-Create User — Add a new user to the system.
-Get All Users — List all users with optional pagination.
-Get User by ID — Retrieve detailed information for a specific user.
-Update User Role — Modify the role of a user (ADMIN only).
-Update User Status — Activate or deactivate a user account (ADMIN only).
-Delete User — Soft delete a user from the system (ADMIN only).
-
-Transaction APIs
-Create Transaction — Add a new financial record (income or expense).
-Get All Transactions — Retrieve all transactions with optional filtering, sorting, and pagination.
-Get Transaction by ID — Fetch details of a specific transaction.
-Get Transactions by User ID — Retrieve transactions for a specific user.
-Get My Transactions — Fetch transactions of the currently authenticated user.
-Get Transactions by Date Range — Filter transactions for the logged-in user by fromDate and optional toDate.
-Update Transaction — Edit transaction details.
-Soft Delete Transaction — Mark a transaction as deleted without removing it from the database.
-
-Dashboard APIs
-Get Overall Summary — Aggregate all users’ transaction data into system-wide statistics (ADMIN / ANALYST).
-Get Overall Category Totals — Summarize amounts per category across the system.
-Get Overall Monthly Trends — View trends of transactions per month for the whole system.
-Get Summary by User — Retrieve aggregated transaction data for a specific user.
-Get Categories by User — Category-wise transaction totals for a given user.
-Get Monthly Trend by User — Monthly transaction trends for a specific user.
-Get My Summary — Personalized summary for the logged-in user.
-Get My Categories — Logged-in user’s transactions grouped by category.
-Get My Trends — Monthly trends for the current user.
-Get My Recent — Fetch the most recent transactions of the logged-in user.
-Export CSV — Download transaction summaries as CSV files, scoped per role or user.
 
 ---
 
