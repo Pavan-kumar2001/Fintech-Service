@@ -9,7 +9,7 @@
 | | |
 |---|---|
 | **Language** | Java 17 |
-| **Framework** | Spring Boot 3.x |
+| **Framework** | Spring Boot 4.x |
 | **Security** | Spring Security + JWT (Stateless) |
 | **ORM** | Spring Data JPA (Hibernate) |
 | **Database** | H2 In-Memory |
