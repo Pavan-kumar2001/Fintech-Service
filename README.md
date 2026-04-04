@@ -49,17 +49,52 @@ com/fintech/fintech_service/
 │   ├── TransactionController.java
 │   └── DashboardController.java
 ├── dto/
-│   ├── auth/           AuthRequest · AuthResponse
-│   ├── dashboard/      DashboardSummary · CategoryTotal · MonthlyTrend · ExportRequest
-│   ├── roleandstatus/  UpdateRoleRequest · UpdateStatusRequest
-│   ├── transaction/    TransactionRequest · TransactionResponse
-│   └── user/           UserRequest · UserResponse
+│   ├── auth/
+│   │   ├── AuthRequest.java
+│   │   └── AuthResponse.java
+│   ├── dashboard/
+│   │   ├── CategoryTotal.java
+│   │   ├── DashboardSummary.java
+│   │   ├── ExportRequest.java
+│   │   └── MonthlyTrend.java
+│   ├── roleandstatus/
+│   │   ├── UpdateRoleRequest.java
+│   │   └── UpdateStatusRequest.java
+│   ├── transaction/
+│   │   ├── TransactionRequest.java
+│   │   └── TransactionResponse.java
+│   └── user/
+│       ├── UserRequest.java
+│       └── UserResponse.java
 ├── entity/
+│   ├── Transaction.java
+│   └── User.java
 ├── enums/
+│   ├── Role.java
+│   ├── Status.java
+│   └── TransactionType.java
 ├── exception/
+│   ├── GlobalExceptionHandler.java
+│   ├── ResourceAlreadyExistsException.java
+│   └── ResourceNotFoundException.java
 ├── repository/
+│   ├── TransactionRepository.java
+│   └── UserRepository.java
 ├── security/
+│   ├── config/
+│   │   └── SecurityConfig.java
+│   ├── filter/
+│   │   └── JwtAuthFilter.java
+│   ├── service/
+│   │   ├── CustomInitializer.java
+│   │   └── CustomUserDetailsService.java
+│   └── util/
+│       ├── JWTUtil.java
+│       └── SecurityUtil.java
 ├── service/
+│   ├── DashboardService.java
+│   ├── TransactionService.java
+│   └── UserService.java
 └── FintechServiceApplication.java
 ```
 
@@ -94,12 +129,12 @@ jwt.expiration=86400000
 
 ## 👤 Default Users *(Auto-seeded on startup)*
 
-| Name | Email | Password | Role |
+| Name | Mobile | Password | Role |
 |---|---|---|---|
-| Alice Admin | alice@fintech.com | Admin@123 | ADMIN |
-| Carol Analyst | carol@fintech.com | Analyst@123 | ANALYST |
-| Dave User | dave@fintech.com | User@123 | USER |
-| Bob Viewer | bob@fintech.com | Viewer@123 | VIEWER |
+| Admin | 9353177331 | Admin@123 | ADMIN |
+| Analyst | 6778986543 | Analyst@123 | ANALYST |
+|  User | 6363622640 | User@123 | USER |
+| Viewer | 8788899765 | Viewer@123 | VIEWER |
 
 > Login directly with these credentials — no registration needed.
 
@@ -122,7 +157,7 @@ All other requests          →  Authorization: Bearer <token>
 | Capability | Viewer | User | Analyst | Admin |
 |---|:---:|:---:|:---:|:---:|
 | Login & register | ✅ | ✅ | ✅ | ✅ |
-| Create own transactions | ❌ | ✅ | ❌ | ✅ |
+| Create own transactions | ❌ | ✅ | ❌ | ❌ |
 | View own transactions (`/my`) | ✅ | ✅ | ✅ | ✅ |
 | Own dashboard — summary, categories, trends, recent | ✅ | ✅ | ✅ | ✅ |
 | View ALL transactions | ❌ | ❌ | ✅ | ✅ |
