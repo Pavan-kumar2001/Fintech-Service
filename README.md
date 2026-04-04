@@ -116,14 +116,24 @@ Server starts at **`http://localhost:8080`**
 
 **`application.properties`** — no changes needed for dev:
 ```properties
-spring.datasource.url=jdbc:h2:mem:fintechdb
+//H2-InMemory-Database
+spring.datasource.url=jdbc:h2:mem:financedb
+spring.datasource.driver-class-name=org.h2.Driver
+spring.datasource.username=fintech
+spring.datasource.password=
+
 spring.h2.console.enabled=true
 spring.h2.console.path=/h2-console
-jwt.secret=your-256-bit-secret-key
-jwt.expiration=86400000
+
+spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+spring.jpa.hibernate.ddl-auto=update
+
+//SECURITY
+jwt.secret=my-super-secret-key-that-is-long-enough
+jwt.expiration=3600000
 ```
 
-> H2 Console → `http://localhost:8080/h2-console` · JDBC URL: `jdbc:h2:mem:fintechdb` · User: `sa` · Password: *(blank)*
+> H2 Console → `http://localhost:8080/h2-console` · JDBC URL: `jdbc:h2:mem:fintechdb` · User: `fintech` · Password: *(blank)*
 
 ---
 
