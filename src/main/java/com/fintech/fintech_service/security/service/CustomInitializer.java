@@ -17,11 +17,11 @@ public class CustomInitializer {
     @Bean
     public CommandLineRunner createAdminUser(UserRepository userRepository, PasswordEncoder passwordEncoder){
         return  args -> {
-            if(userRepository.findByUserName("admin").isEmpty()){
+            if(userRepository.findByUserName("Admin").isEmpty()){
                 User admin=new User();
-                admin.setUserName("admin");
+                admin.setUserName("Admin");
                 admin.setMobile("9353177331");
-                admin.setPassword(passwordEncoder.encode("admin@123"));
+                admin.setPassword(passwordEncoder.encode("Admin@123"));
                 admin.setRole(Role.ADMIN);
                 admin.setStatus(Status.ACTIVE);
                 userRepository.save(admin);
@@ -29,12 +29,36 @@ public class CustomInitializer {
                 System.out.println("Default Admin Created");
             }
 
-            if(userRepository.findByUserName("user").isEmpty()){
+            if(userRepository.findByUserName("User").isEmpty()){
                 User user=new User();
-                user.setUserName("user");
+                user.setUserName("User");
                 user.setMobile("6363622640");
-                user.setPassword(passwordEncoder.encode("user@123"));
+                user.setPassword(passwordEncoder.encode("User@123"));
                 user.setRole(Role.USER);
+                user.setStatus(Status.ACTIVE);
+                user.setCreatedAt(LocalDateTime.now());
+                userRepository.save(user);
+                System.out.println("Default User Created");
+            }
+
+            if(userRepository.findByUserName("Analyst").isEmpty()){
+                User user=new User();
+                user.setUserName("Analyst");
+                user.setMobile("6778986543");
+                user.setPassword(passwordEncoder.encode("Analyst@123"));
+                user.setRole(Role.ANALYST);
+                user.setStatus(Status.ACTIVE);
+                user.setCreatedAt(LocalDateTime.now());
+                userRepository.save(user);
+                System.out.println("Default Analyst Created");
+            }
+
+            if(userRepository.findByUserName("Viewer").isEmpty()){
+                User user=new User();
+                user.setUserName("Viewer");
+                user.setMobile("8788899765");
+                user.setPassword(passwordEncoder.encode("Viewer@123"));
+                user.setRole(Role.VIEWER);
                 user.setStatus(Status.ACTIVE);
                 user.setCreatedAt(LocalDateTime.now());
                 userRepository.save(user);
