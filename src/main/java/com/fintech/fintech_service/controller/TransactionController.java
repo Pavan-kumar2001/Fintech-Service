@@ -17,7 +17,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
-
 @RestController
 @RequestMapping("/api/transactions")
 @RequiredArgsConstructor
@@ -29,7 +28,7 @@ public class TransactionController {
     @PreAuthorize("hasAnyRole('USER')")
     public ResponseEntity<TransactionResponse> create(
             @Valid @RequestBody TransactionRequest req, Authentication authentication) {
-        // Extract the usernamemobile from the JWT/Security context
+        // Extract the mobile from the JWT/Security context
         String mobile = authentication.getName();
 
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -62,7 +61,6 @@ public class TransactionController {
         return ResponseEntity.ok(transactionService.getByUserId(userId));
     }
 
-
     @GetMapping("/my")
     @PreAuthorize("hasAnyRole('USER')")
     public ResponseEntity<?> getMyTransactions(Authentication authentication) {
@@ -77,7 +75,6 @@ public class TransactionController {
                 "data", myTransactions
         ));
     }
-
 
     @PutMapping("/{id}") // This 'id'
     @PreAuthorize("hasRole('ADMIN')")

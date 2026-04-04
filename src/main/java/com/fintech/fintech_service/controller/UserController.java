@@ -6,7 +6,6 @@ import com.fintech.fintech_service.dto.user.UserRequest;
 import com.fintech.fintech_service.dto.user.UserResponse;
 import com.fintech.fintech_service.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

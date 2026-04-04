@@ -10,7 +10,6 @@ import com.fintech.fintech_service.enums.TransactionType;
 import com.fintech.fintech_service.exception.ResourceNotFoundException;
 import com.fintech.fintech_service.repository.TransactionRepository;
 import com.fintech.fintech_service.repository.UserRepository;
-import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
@@ -105,11 +104,6 @@ public class DashboardService {
     // ─────────────────────────────────────────────
     // HELPERS
     // ─────────────────────────────────────────────
-
-    private void validateUser(Long userId) {
-        userRepo.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
-    }
 
     private BigDecimal orZero(BigDecimal value) {
         return value != null ? value : BigDecimal.ZERO;

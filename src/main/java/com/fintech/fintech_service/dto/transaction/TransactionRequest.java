@@ -1,6 +1,5 @@
 package com.fintech.fintech_service.dto.transaction;
 
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 

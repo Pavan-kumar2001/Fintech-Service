@@ -1,6 +1,5 @@
 package com.fintech.fintech_service.controller;
 
-
 import com.fintech.fintech_service.dto.auth.AuthRequest;
 import com.fintech.fintech_service.dto.user.UserRequest;
 import com.fintech.fintech_service.security.util.JWTUtil;

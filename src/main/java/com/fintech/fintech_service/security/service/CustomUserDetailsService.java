@@ -1,6 +1,5 @@
 package com.fintech.fintech_service.security.service;
 
-
 import com.fintech.fintech_service.entity.User;
 import com.fintech.fintech_service.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

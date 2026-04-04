@@ -22,8 +22,8 @@ import java.util.Map;
 @RequestMapping("/api/dashboard")
 @RequiredArgsConstructor
 public class DashboardController {
-    private final DashboardService dashboardService;
 
+    private final DashboardService dashboardService;
 
     //Over All
     @GetMapping("/summary")
@@ -50,6 +50,7 @@ public class DashboardController {
         return ResponseEntity.ok(dashboardService.getSummaryByUser(id));
     }
 
+    //User
     @GetMapping("/categories/{userId}")
     @PreAuthorize("hasAnyRole('ANALYST','ADMIN')")
     public ResponseEntity<Map<String, BigDecimal>> getCategoriesByUser(@PathVariable Long userId) {
@@ -97,7 +98,6 @@ public class DashboardController {
         String mobile = authentication.getName();
         return ResponseEntity.ok(dashboardService.getRecentByMobile(mobile));
     }
-
 
    //EXPORT CSV FILE
     @PostMapping("/export")

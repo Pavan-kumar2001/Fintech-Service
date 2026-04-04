@@ -13,5 +13,4 @@ public class UpdateStatusRequest {
     )
     private String status;
 
-
 }

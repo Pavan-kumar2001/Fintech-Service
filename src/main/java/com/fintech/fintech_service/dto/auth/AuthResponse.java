@@ -1,4 +1,4 @@
-package com.fintech.fintech_service.dto.response;
+package com.fintech.fintech_service.dto.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

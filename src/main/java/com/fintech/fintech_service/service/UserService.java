@@ -9,7 +9,6 @@ import com.fintech.fintech_service.exception.ResourceAlreadyExistsException;
 import com.fintech.fintech_service.exception.ResourceNotFoundException;
 import com.fintech.fintech_service.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
