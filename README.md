@@ -179,136 +179,42 @@ All other requests          →  Authorization: Bearer <token>
 
 ---
 
-## 📡 API Reference
+## 🗂️ API Overview
 
-### 🔐 Auth — `/api/v1/auth` *(Public)*
+Auth APIs
+Login User — Authenticate a user using mobile + password and receive a JWT token for subsequent requests.
+Register User — Create a new account (default role: VIEWER).
 
-| Method | Endpoint | Description |
-|---|---|---|
-| POST | `/register` | Register — always assigned VIEWER role |
-| POST | `/login` | Authenticate and receive JWT token |
+User APIs
+Create User — Add a new user to the system.
+Get All Users — List all users with optional pagination.
+Get User by ID — Retrieve detailed information for a specific user.
+Update User Role — Modify the role of a user (ADMIN only).
+Update User Status — Activate or deactivate a user account (ADMIN only).
+Delete User — Soft delete a user from the system (ADMIN only).
 
-```json
-// POST /login
-{ "email": "alice@fintech.com", "password": "Admin@123" }
+Transaction APIs
+Create Transaction — Add a new financial record (income or expense).
+Get All Transactions — Retrieve all transactions with optional filtering, sorting, and pagination.
+Get Transaction by ID — Fetch details of a specific transaction.
+Get Transactions by User ID — Retrieve transactions for a specific user.
+Get My Transactions — Fetch transactions of the currently authenticated user.
+Get Transactions by Date Range — Filter transactions for the logged-in user by fromDate and optional toDate.
+Update Transaction — Edit transaction details.
+Soft Delete Transaction — Mark a transaction as deleted without removing it from the database.
 
-// Response
-{ "token": "eyJhbGci...", "type": "Bearer", "userId": 1, "name": "Alice Admin", "role": "ADMIN" }
-```
-
----
-
-### 👤 User Management — `/api/v1/users` *(Admin only)*
-
-| Method | Endpoint | Description |
-|---|---|---|
-| GET | `/` | List all users |
-| GET | `/{id}` | Get user by ID |
-| POST | `/` | Create user directly |
-| PUT | `/{id}` | Update name / email |
-| PUT | `/{id}/role` | Change role |
-| PATCH | `/{id}/status` | Activate or deactivate account |
-| DELETE | `/{id}` | Delete user permanently |
-
-```json
-// PUT /{id}/role  →  allowed values: "VIEWER" | "USER" | "ANALYST" | "ADMIN"
-{ "role": "USER" }
-
-// PATCH /{id}/status
-{ "active": false }
-```
-
----
-
-### 💳 Transactions — `/api/v1/transactions`
-
-| Method | Endpoint | Role | Description |
-|---|---|---|---|
-| GET | `/` | Analyst, Admin | All transactions — paginated & filterable |
-| GET | `/{id}` | Analyst, Admin | Single transaction by ID |
-| GET | `/user/{userId}` | Admin | Transactions for a specific user |
-| GET | `/my` | **All roles** | Logged-in user's own transactions |
-| POST | `/` | **User**, Admin | Create new transaction |
-| PUT | `/{id}` | Admin | Update transaction |
-| DELETE | `/{id}` | Admin | Soft delete (sets `deleted=true`) |
-
-```json
-// POST /  or  PUT /{id}
-{
-  "amount": 60000.00,
-  "type": "INCOME",
-  "category": "Salary",
-  "date": "2026-04-01",
-  "notes": "April monthly salary"
-}
-```
-
-**Query params for `GET /` and `GET /my`:**
-
-| Param | Example | Notes |
-|---|---|---|
-| `type` | `INCOME` | `INCOME` or `EXPENSE` |
-| `category` | `Salary` | Exact match |
-| `from` | `2026-01-01` | ISO 8601 |
-| `to` | `2026-04-30` | ISO 8601 |
-| `page` | `0` | Default 0 |
-| `size` | `10` | Default 10 |
-
----
-
-### 📊 Dashboard — `/api/v1/dashboard`
-
-#### Overall *(Analyst + Admin — all users combined)*
-
-| Method | Endpoint | Description |
-|---|---|---|
-| GET | `/summary` | Total income, expenses, net balance |
-| GET | `/categories` | Category-wise totals |
-| GET | `/trends` | Monthly income vs expense breakdown |
-
-#### My Data *(All roles — own data only)*
-
-| Method | Endpoint | Description |
-|---|---|---|
-| GET | `/my-summary` | Own income, expenses, net balance |
-| GET | `/my-categories` | Own category-wise totals |
-| GET | `/my-trends` | Own monthly trends |
-| GET | `/my-recent` | Own last 10 transactions |
-
-#### By User ID *(Admin only)*
-
-| Method | Endpoint | Description |
-|---|---|---|
-| GET | `/user/{id}/summary` | Specific user's summary |
-| GET | `/user/{id}/categories` | Specific user's categories |
-| GET | `/user/{id}/trends` | Specific user's monthly trends |
-
-#### Export *(Analyst + Admin)*
-
-| Method | Endpoint | Description |
-|---|---|---|
-| POST | `/export` | Download filtered transactions as CSV |
-
-```json
-// POST /export  →  all fields optional, send {} to export everything
-{ "type": "EXPENSE", "from": "2026-04-01", "to": "2026-04-30" }
-```
-
-> **Postman:** Send → `Save Response → Save to file` → `transactions.csv`
-
-**Sample dashboard responses:**
-```json
-// /summary  or  /my-summary
-{ "totalIncome": 157000.00, "totalExpenses": 27500.00, "netBalance": 129500.00 }
-
-// /trends  or  /my-trends
-[{ "year": 2026, "month": 4, "monthName": "April",
-   "totalIncome": 85000.00, "totalExpenses": 25700.00, "net": 59300.00 }]
-
-// /categories  or  /my-categories
-[{ "category": "Salary", "total": 60000.00, "type": "INCOME"  },
- { "category": "Rent",   "total": 18000.00, "type": "EXPENSE" }]
-```
+Dashboard APIs
+Get Overall Summary — Aggregate all users’ transaction data into system-wide statistics (ADMIN / ANALYST).
+Get Overall Category Totals — Summarize amounts per category across the system.
+Get Overall Monthly Trends — View trends of transactions per month for the whole system.
+Get Summary by User — Retrieve aggregated transaction data for a specific user.
+Get Categories by User — Category-wise transaction totals for a given user.
+Get Monthly Trend by User — Monthly transaction trends for a specific user.
+Get My Summary — Personalized summary for the logged-in user.
+Get My Categories — Logged-in user’s transactions grouped by category.
+Get My Trends — Monthly trends for the current user.
+Get My Recent — Fetch the most recent transactions of the logged-in user.
+Export CSV — Download transaction summaries as CSV files, scoped per role or user.
 
 ---
 
@@ -350,30 +256,6 @@ GlobalExceptionHandler (@RestControllerAdvice)
 
 ---
 
-## 🧪 Postman Testing Sequence
-
-```
-1.  Login as Alice Admin                →  copy ADMIN token
-2.  Promote Dave → USER role            →  PUT /users/3/role  { "role": "USER" }
-3.  Promote Carol → ANALYST             →  PUT /users/2/role  { "role": "ANALYST" }
-4.  Seed 4 transactions (Admin token)   →  POST /transactions  ×4
-5.  Login as Dave (USER token)
-    ├── POST /transactions              →  ✅ 201 Created (User can create own)
-    ├── GET  /transactions/my           →  ✅ 200 (own transactions)
-    ├── GET  /dashboard/my-summary      →  ✅ 200 (own summary)
-    ├── GET  /dashboard/my-recent       →  ✅ 200 (last 10)
-    ├── GET  /dashboard/my-categories   →  ✅ 200 (category wise)
-    ├── GET  /dashboard/my-trends       →  ✅ 200 (monthly trends)
-    └── GET  /transactions              →  ❌ 403 Forbidden
-6.  Login as Carol (ANALYST token)
-    ├── GET  /dashboard/summary         →  ✅ 200 (overall data)
-    └── POST /transactions              →  ❌ 403 Forbidden
-7.  Login as Bob (VIEWER token)
-    ├── GET  /dashboard/my-summary      →  ✅ 200
-    └── POST /transactions              →  ❌ 403 Forbidden
-8.  Export CSV (Admin/Analyst token)    →  POST /export  {}
-```
-
 ---
 
 ## 🚀 Future Improvements
@@ -383,6 +265,8 @@ GlobalExceptionHandler (@RestControllerAdvice)
 - **Redis Cache** — Cache dashboard aggregations for high-read performance
 - **Structured Logging** — SLF4J + Logback with request tracing
 - **Spring Profiles** — `dev` / `prod` configs with PostgreSQL in production
+- **Spring AOP Programming — Cross-cutting concerns such as logging, transactions, and security via aspects.
+- **API Versioning — Support for multiple API versions to maintain backward compatibility.
 - **Unit & Integration Tests** — JUnit 5 + Mockito service and controller coverage
 - **Swagger / OpenAPI** — Auto-generated interactive docs at `/swagger-ui.html`
 - **Docker** — `Dockerfile` + `docker-compose` for one-command deployment
