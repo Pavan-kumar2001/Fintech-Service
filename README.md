@@ -324,7 +324,7 @@ GlobalExceptionHandler (@RestControllerAdvice)
 ├── ResourceNotFoundException        →  404
 ├── AccessDeniedException            →  403
 ├── BadCredentialsException          →  401
-├── DuplicateEmailException          →  409
+├── ResourceAlreadyExistException    →  409
 └── Exception                        →  500  (catch-all)
 ```
 
