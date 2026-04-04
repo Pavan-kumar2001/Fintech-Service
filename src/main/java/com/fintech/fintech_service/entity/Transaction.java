@@ -19,7 +19,8 @@ import java.time.LocalDateTime;
 public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long transaction_id;
+    @Column(name = "transaction_id")
+    private Long transactionId;
 
     @Column(nullable = false)
     private BigDecimal amount;

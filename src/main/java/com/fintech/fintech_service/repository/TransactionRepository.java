@@ -13,11 +13,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
-    List<Transaction> findByDeletedFalse();
 
-    List<Transaction> findByTypeAndDeletedFalse(TransactionType type);
-    List<Transaction> findByCategoryAndDeletedFalse(String category);
-    List<Transaction> findByDateBetweenAndDeletedFalse(LocalDate start, LocalDate end);
     List<Transaction> findByCreatedByIdAndDeletedFalse(Long userId);
 
 
@@ -27,10 +23,17 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     @Query("SELECT t.category, SUM(t.amount) FROM Transaction t WHERE t.deleted = false GROUP BY t.category")
     List<Object[]> sumByCategory();
 
+    @Query("SELECT t FROM Transaction t WHERE t.createdBy.id = :userId AND t.date BETWEEN :fromDate AND :toDate AND t.deleted = false ORDER BY t.date DESC")
+    List<Transaction> findByUserAndDateRange(
+            @Param("userId") Long userId,
+            @Param("fromDate") LocalDate fromDate,
+            @Param("toDate") LocalDate toDate
+    );
+
     // Add Pageable overloads
     Page<Transaction> findByTypeAndDeletedFalse(TransactionType type, Pageable pageable);
-    Page<Transaction> findByCategoryAndDeletedFalse(String category, Pageable pageable);
-    Page<Transaction> findByDateBetweenAndDeletedFalse(LocalDate from, LocalDate to, Pageable pageable);
+    Page<Transaction> findByCategoryAndDeletedFalse( String category, Pageable pageable);
+    Page<Transaction> findByDateBetweenAndDeletedFalse( LocalDate from, LocalDate to, Pageable pageable);
     Page<Transaction> findByDeletedFalse(Pageable pageable);
 
 

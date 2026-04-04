@@ -4,6 +4,7 @@ import com.fintech.fintech_service.enums.Role;
 import com.fintech.fintech_service.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -39,6 +40,7 @@ public class User implements UserDetails {
 
     private LocalDateTime createdAt=LocalDateTime.now() ;
 
+    @NotNull
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<SimpleGrantedAuthority> authorities=new HashSet<>();
@@ -46,6 +48,7 @@ public class User implements UserDetails {
         return authorities;
     }
 
+    @NotNull
     @Override
     public String getUsername() {
         return userName;

@@ -21,11 +21,12 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class TransactionService {
-    private final TransactionRepository repo;
+    private final TransactionRepository transactionRepository;
     private final UserRepository userRepository;
     private final UserService userService;
 
@@ -40,7 +41,7 @@ public class TransactionService {
                 ));
 
         // 2. Get current balance
-        BigDecimal currentBalance = repo.getUserBalance(user.getId());
+        BigDecimal currentBalance = transactionRepository.getUserBalance(user.getId());
 
         // 3. Convert type
         TransactionType type = TransactionType.valueOf(req.getType().toUpperCase());
@@ -62,7 +63,7 @@ public class TransactionService {
         t.setCreatedBy(user);
 
         // 6. Save
-        return toResponse(repo.save(t));
+        return toResponse(transactionRepository.save(t));
     }
 
     public Page<TransactionResponse> getAll(String type, String category,
@@ -72,13 +73,13 @@ public class TransactionService {
         Page<Transaction> resultPage;
 
         if (type != null) {
-            resultPage = repo.findByTypeAndDeletedFalse(TransactionType.valueOf(type.toUpperCase()), pageable);
+            resultPage = transactionRepository.findByTypeAndDeletedFalse(TransactionType.valueOf(type.toUpperCase()), pageable);
         } else if (category != null) {
-            resultPage = repo.findByCategoryAndDeletedFalse(category, pageable);
+            resultPage = transactionRepository.findByCategoryAndDeletedFalse(category, pageable);
         } else if (from != null && to != null) {
-            resultPage = repo.findByDateBetweenAndDeletedFalse(from, to, pageable);
+            resultPage = transactionRepository.findByDateBetweenAndDeletedFalse(from, to, pageable);
         } else {
-            resultPage = repo.findByDeletedFalse(pageable);
+            resultPage = transactionRepository.findByDeletedFalse(pageable);
         }
 
         return resultPage.map(this::toResponse); // Maps Page<Transaction> -> Page<TransactionResponse>
@@ -86,7 +87,7 @@ public class TransactionService {
 
 
     public @Nullable TransactionResponse getById(Long id) {
-        Transaction transaction = repo.findById(id)
+        Transaction transaction = transactionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Transaction not found with id: " + id
                 ));
@@ -100,28 +101,42 @@ public class TransactionService {
                         "User not found with id: " + userId
                 ));
 
-        return repo.findByCreatedByIdAndDeletedFalse(userId)
+        return transactionRepository.findByCreatedByIdAndDeletedFalse(userId)
                 .stream()
                 .map(this::toResponse)
                 .toList();
     }
 
+    public List<TransactionResponse> getMyTransactionsByDate(String mobile, LocalDate fromDate, LocalDate toDate) {
+        // Find user by mobile
+        User user = userRepository.findByMobile(mobile)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with mobile: " + mobile));
 
+        // Fetch transactions for user between fromDate and toDate
+        List<Transaction> transactions = transactionRepository.findByUserAndDateRange(user.getId(), fromDate, toDate);
 
-    public void delete(Long id) {
-        Transaction t = repo.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Transaction not found with Id "+id));
-        t.setDeleted(true);
-        repo.save(t);
+        // Map to TransactionResponse DTO
+        return transactions.stream()
+                .map(this::toResponse)
+                .collect(Collectors.toList());
     }
 
 
 
-    public TransactionResponse update(Long transaction_id, @Valid TransactionRequest req) {
+    public void delete(Long id) {
+        Transaction t = transactionRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Transaction not found with Id "+id));
+        t.setDeleted(true);
+        transactionRepository.save(t);
+    }
 
 
-        Transaction transaction = repo.findById(transaction_id)
-                .orElseThrow(() -> new ResourceNotFoundException("Transaction not found with id: " + transaction_id));
+
+    public TransactionResponse update(Long transactionId, @Valid TransactionRequest req) {
+
+
+        Transaction transaction = transactionRepository.findById(transactionId)
+                .orElseThrow(() -> new ResourceNotFoundException("Transaction not found with id: " + transactionId));
 
         transaction.setAmount(req.getAmount());
         transaction.setType(TransactionType.valueOf(req.getType())); // assuming enum
@@ -130,11 +145,11 @@ public class TransactionService {
         transaction.setNotes(req.getNotes());
 
         // save updated entity
-        Transaction updated = repo.save(transaction);
+        Transaction updated = transactionRepository.save(transaction);
 
         // map to response DTO
         TransactionResponse response = new TransactionResponse();
-        response.setTransaction_id(updated.getTransaction_id());
+        response.setTransactionId(updated.getTransactionId());
         response.setAmount(updated.getAmount());
         response.setType(updated.getType().name());
         response.setCategory(updated.getCategory());
@@ -148,7 +163,7 @@ public class TransactionService {
     private TransactionResponse toResponse(Transaction t) {
 
         TransactionResponse response=new TransactionResponse();
-        response.setTransaction_id(t.getTransaction_id());
+        response.setTransactionId(t.getTransactionId());
         response.setAmount(t.getAmount());
         response.setType(String.valueOf(t.getType()));
         response.setCategory(t.getCategory());
@@ -164,7 +179,7 @@ public class TransactionService {
         User user = userRepository.findByMobile(mobile)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        return repo.findByCreatedByIdAndDeletedFalse(user.getId())
+        return transactionRepository.findByCreatedByIdAndDeletedFalse(user.getId())
                 .stream()
                 .map(this::toResponse)
                 .toList();

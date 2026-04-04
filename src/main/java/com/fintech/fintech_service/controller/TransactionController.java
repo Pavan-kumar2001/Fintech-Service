@@ -61,6 +61,9 @@ public class TransactionController {
         return ResponseEntity.ok(transactionService.getByUserId(userId));
     }
 
+
+
+    //Current Logged User
     @GetMapping("/my")
     @PreAuthorize("hasAnyRole('USER')")
     public ResponseEntity<?> getMyTransactions(Authentication authentication) {
@@ -76,12 +79,36 @@ public class TransactionController {
         ));
     }
 
+    @GetMapping("/date")
+    @PreAuthorize("hasAnyRole('USER')")
+    public ResponseEntity<?> getMyTransactionsByDate(
+            Authentication authentication,
+            @RequestParam("fromDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate,
+            @RequestParam(value = "toDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate
+    ) {
+        String mobile = authentication.getName();
+
+        // If toDate not provided, use current date
+        if (toDate == null) {
+            toDate = LocalDate.now();
+        }
+
+        List<TransactionResponse> myTransactions = transactionService.getMyTransactionsByDate(mobile, fromDate, toDate);
+
+        return ResponseEntity.ok(Map.of(
+                "message", myTransactions.isEmpty()
+                        ? "No transactions found in the given date range"
+                        : "Transactions fetched successfully",
+                "data", myTransactions
+        ));
+    }
+
     @PutMapping("/{id}") // This 'id'
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<TransactionResponse> update(
-            @PathVariable("id") Long transaction_id, // Must map 'id' to 'transaction_id'
+            @PathVariable("id") Long transactionId,
             @Valid @RequestBody TransactionRequest req) {
-        return ResponseEntity.ok(transactionService.update(transaction_id, req));
+        return ResponseEntity.ok(transactionService.update(transactionId, req));
     }
 
     @DeleteMapping("/{id}")

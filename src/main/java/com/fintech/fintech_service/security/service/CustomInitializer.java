@@ -15,21 +15,24 @@ import java.time.LocalDateTime;
 public class CustomInitializer {
 
     @Bean
-    public CommandLineRunner createAdminUser(UserRepository userRepository, PasswordEncoder passwordEncoder){
+    public CommandLineRunner createDefaultUser(UserRepository userRepository, PasswordEncoder passwordEncoder){
         return  args -> {
+            System.out.println();
             if(userRepository.findByUserName("Admin").isEmpty()){
+                String rawPassword = "Admin@123";
                 User admin=new User();
                 admin.setUserName("Admin");
                 admin.setMobile("9353177331");
-                admin.setPassword(passwordEncoder.encode("Admin@123"));
+                admin.setPassword(passwordEncoder.encode(rawPassword));
                 admin.setRole(Role.ADMIN);
                 admin.setStatus(Status.ACTIVE);
                 userRepository.save(admin);
                 admin.setCreatedAt(LocalDateTime.now());
-                System.out.println("Default Admin Created");
+                System.out.println("Default Admin Created - mobile: "+admin.getMobile()+" Password: "+rawPassword);
             }
 
             if(userRepository.findByUserName("User").isEmpty()){
+                String rawPassword = "User@123";
                 User user=new User();
                 user.setUserName("User");
                 user.setMobile("6363622640");
@@ -38,10 +41,11 @@ public class CustomInitializer {
                 user.setStatus(Status.ACTIVE);
                 user.setCreatedAt(LocalDateTime.now());
                 userRepository.save(user);
-                System.out.println("Default User Created");
+                System.out.println("Default User Created - mobile: "+user.getMobile()+" Password: "+rawPassword);
             }
 
             if(userRepository.findByUserName("Analyst").isEmpty()){
+                String rawPassword = "Analyst@123";
                 User user=new User();
                 user.setUserName("Analyst");
                 user.setMobile("6778986543");
@@ -50,10 +54,11 @@ public class CustomInitializer {
                 user.setStatus(Status.ACTIVE);
                 user.setCreatedAt(LocalDateTime.now());
                 userRepository.save(user);
-                System.out.println("Default Analyst Created");
+                System.out.println("Default Analyst Created - mobile: "+user.getMobile()+" Password: "+rawPassword);
             }
 
             if(userRepository.findByUserName("Viewer").isEmpty()){
+                String rawPassword = "Viewer@123";
                 User user=new User();
                 user.setUserName("Viewer");
                 user.setMobile("8788899765");
@@ -62,9 +67,12 @@ public class CustomInitializer {
                 user.setStatus(Status.ACTIVE);
                 user.setCreatedAt(LocalDateTime.now());
                 userRepository.save(user);
-                System.out.println("Default User Created");
+                System.out.println("Default User Created mobile: "+user.getMobile()+" Password: "+rawPassword);
             }
+
+
         };
     }
+
 
 }

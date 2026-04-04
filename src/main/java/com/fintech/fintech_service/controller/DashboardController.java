@@ -72,7 +72,7 @@ public class DashboardController {
         return ResponseEntity.ok(dashboardService.getSummaryByMobile(mobile));
     }
 
-    // My Categories
+    //Current Logged User
     @GetMapping("/my-categories")
     @PreAuthorize("hasAnyRole('USER','ANALYST','ADMIN')")
     public ResponseEntity<Map<String, BigDecimal>> getMyCategories(Authentication authentication) {
@@ -81,7 +81,7 @@ public class DashboardController {
         return ResponseEntity.ok(dashboardService.getCategoryTotalsByMobile(mobile));
     }
 
-    // My Trends
+    //Current Logged User
     @GetMapping("/my-trends")
     @PreAuthorize("hasAnyRole('USER','ANALYST','ADMIN')")
     public ResponseEntity<List<MonthlyTrend>> getMyTrends(Authentication authentication) {
@@ -90,7 +90,7 @@ public class DashboardController {
         return ResponseEntity.ok(dashboardService.getMonthlyTrendsByMobile(mobile));
     }
 
-    // My Recent
+    //Current Logged User
     @GetMapping("/my-recent")
     @PreAuthorize("hasAnyRole('USER','ANALYST','ADMIN')")
     public ResponseEntity<List<TransactionResponse>> getMyRecent(Authentication authentication) {

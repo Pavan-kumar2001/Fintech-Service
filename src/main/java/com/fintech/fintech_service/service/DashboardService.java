@@ -124,7 +124,7 @@ public class DashboardService {
 
     private TransactionResponse toResponse(Transaction t) {
         TransactionResponse r = new TransactionResponse();
-        r.setTransaction_id(t.getTransaction_id());
+        r.setTransactionId(t.getTransactionId());
         r.setAmount(t.getAmount());
         r.setType(t.getType().name());
         r.setCategory(t.getCategory());
@@ -156,7 +156,7 @@ public class DashboardService {
 
         // Data rows
         for (Transaction t : transactions) {
-            csv.append(t.getTransaction_id()).append(",")
+            csv.append(t.getTransactionId()).append(",")
                     .append(t.getAmount()).append(",")
                     .append(t.getType().name()).append(",")
                     .append(escapeCsv(t.getCategory())).append(",")
