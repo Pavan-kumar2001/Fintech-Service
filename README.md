@@ -1,6 +1,6 @@
 # 💰 FinTech Service — Finance Dashboard Backend
 
-> A secure, role-driven **Finance Dashboard Backend** built with **Spring Boot 3.x** — featuring JWT authentication, four-tier role-based access control, full transaction management, and multi-scope dashboard analytics.
+> A secure, role-driven **Finance Dashboard Backend** built with **Spring Boot 4.x** — featuring JWT authentication, four-tier role-based access control, full transaction management, and multi-scope dashboard analytics.
 
 ---
 
