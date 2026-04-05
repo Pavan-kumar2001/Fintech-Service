@@ -1,3 +1,7 @@
+Here is the updated README with those three changes:
+
+---
+
 # 💰 FinTech Service — Finance Dashboard Backend
 
 > A secure, role-driven **Finance Dashboard Backend** built with **Spring Boot 3.x** — featuring JWT authentication, four-tier role-based access control, full transaction management, and multi-scope dashboard analytics.
@@ -22,9 +26,10 @@
 
 | Feature | Detail |
 |---|---|
-| 🔐 JWT Auth | Stateless token-based auth with email & password |
+| 🔐 JWT Auth | Stateless token-based auth with mobile & password |
 | 👥 4-Role RBAC | Admin · Analyst · User · Viewer with strict enforcement |
 | 🧾 Transaction CRUD | Create, read, update, soft-delete with filtering & pagination |
+| 📅 Date Range Filter | Filter transactions by `fromDate` and `toDate` per user |
 | 📊 Dashboard Analytics | Summary, category totals, monthly trends — scoped by role |
 | 📤 CSV Export | Filtered transaction data downloadable as `.csv` |
 | ✅ Validation | Bean validation with regex & field-level error messages |
@@ -35,6 +40,8 @@
 | 🗑️ Soft Delete | Transactions flagged `deleted=true` — never physically removed |
 | 📝 Manual JPQL Queries | Custom `@Query` for aggregations, filters, and trend calculations |
 | 🤖 Seeded Default Users | `CommandLineRunner` auto-creates default accounts on startup |
+| 📋 SLF4J Logging | Structured logging across controllers, services, filters and exception handler |
+| 🔢 API Versioning | All endpoints versioned under `/api/v1/` for backward compatibility |
 | 🎨 Design Patterns | Singleton · Builder · Proxy |
 
 ---
@@ -92,6 +99,7 @@ com/fintech/fintech_service/
 │       ├── JWTUtil.java
 │       └── SecurityUtil.java
 ├── service/
+│   ├── AuthService.java
 │   ├── DashboardService.java
 │   ├── TransactionService.java
 │   └── UserService.java
@@ -104,7 +112,7 @@ com/fintech/fintech_service/
 
 ```bash
 # 1. Clone
-git clone https://github.com/your-username/fintech-service.git
+git clone https://github.com/Pavan-kumar2001/Fintech-Service.git
 cd fintech-service
 
 # 2. Build & Run
@@ -116,7 +124,7 @@ Server starts at **`http://localhost:8080`**
 
 **`application.properties`** — no changes needed for dev:
 ```properties
-//H2-InMemory-Database
+# H2 In-Memory Database
 spring.datasource.url=jdbc:h2:mem:financedb
 spring.datasource.driver-class-name=org.h2.Driver
 spring.datasource.username=fintech
@@ -128,12 +136,18 @@ spring.h2.console.path=/h2-console
 spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
 spring.jpa.hibernate.ddl-auto=update
 
-//SECURITY
+# Security
 jwt.secret=my-super-secret-key-that-is-long-enough
 jwt.expiration=3600000
+
+# Logging
+logging.level.com.fintech.fintech_service=DEBUG
+logging.level.org.springframework.security=INFO
+logging.file.name=logs/fintech-service.log
+logging.pattern.console=%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n
 ```
 
-> H2 Console → `http://localhost:8080/h2-console` · JDBC URL: `jdbc:h2:mem:fintechdb` · User: `fintech` · Password: *(blank)*
+> H2 Console → `http://localhost:8080/h2-console` · JDBC URL: `jdbc:h2:mem:financedb` · User: `fintech` · Password: *(blank)*
 
 ---
 
@@ -143,7 +157,7 @@ jwt.expiration=3600000
 |---|---|---|---|
 | Admin | 9353177331 | Admin@123 | ADMIN |
 | Analyst | 6778986543 | Analyst@123 | ANALYST |
-|  User | 6363622640 | User@123 | USER |
+| User | 6363622640 | User@123 | USER |
 | Viewer | 8788899765 | Viewer@123 | VIEWER |
 
 > Login directly with these credentials — no registration needed.
@@ -153,12 +167,12 @@ jwt.expiration=3600000
 ## 🔐 Authentication
 
 ```
-POST /api/v1/auth/register  →  Account created with VIEWER role (default)
+POST /api/v1/auth/register  →  Account created with USER role (default)
 POST /api/v1/auth/login     →  Returns JWT token
 All other requests          →  Authorization: Bearer <token>
 ```
 
-> Self-registered users always start as **VIEWER**. Only an **Admin** can promote roles via `PUT /api/v1/users/{id}/role`. This is intentional by design — role assignment is a privileged operation.
+> Self-registered users always start as **USER**. Only an **Admin** can promote roles via `PUT /api/v1/users/{id}/role`. This is intentional by design — role assignment is a privileged operation.
 
 ---
 
@@ -169,6 +183,7 @@ All other requests          →  Authorization: Bearer <token>
 | Login & register | ✅ | ✅ | ✅ | ✅ |
 | Create own transactions | ❌ | ✅ | ❌ | ❌ |
 | View own transactions (`/my`) | ✅ | ✅ | ✅ | ✅ |
+| Filter transactions by date range | ❌ | ✅ | ❌ | ❌ |
 | Own dashboard — summary, categories, trends, recent | ✅ | ✅ | ✅ | ✅ |
 | View ALL transactions | ❌ | ❌ | ✅ | ✅ |
 | Overall dashboard (all users combined) | ❌ | ❌ | ✅ | ✅ |
@@ -179,38 +194,78 @@ All other requests          →  Authorization: Bearer <token>
 
 ---
 
+## 🔢 API Versioning
+
+All endpoints are versioned under `/api/v1/` prefix. This ensures backward compatibility — if the API evolves, a new version (`/api/v2/`) can be introduced without breaking existing clients.
+
+```
+Base URL  →  http://localhost:8080/api/v1/
+Auth      →  /api/v1/auth/**
+Users     →  /api/v1/users/**
+Transactions →  /api/v1/transactions/**
+Dashboard →  /api/v1/dashboard/**
+```
+
+---
+
+## 📋 SLF4J Logging
+
+Structured logging is implemented across all key layers using **SLF4J + Logback** (Spring Boot default).
+
+```
+Logging coverage:
+├── AuthService          →  login attempts, success, registration
+├── UserService          →  create, role update, status update, delete
+├── TransactionService   →  create, fetch, update, soft delete
+├── DashboardService     →  all summary, category, trend, export calls
+├── JwtAuthFilter        →  token validation per request
+└── GlobalExceptionHandler → all 400 / 401 / 403 / 404 / 409 / 500 errors
+```
+
+**Log levels used:**
+
+| Level | Used for |
+|---|---|
+| `DEBUG` | Internal lookups, token parsing, filter checks |
+| `INFO` | Successful operations — created, fetched, updated |
+| `WARN` | Blocked operations — wrong password, duplicate mobile, 403 |
+| `ERROR` | Unexpected failures — 500 catch-all |
+
+Logs are written to both console and `logs/fintech-service.log` with daily rolling.
+
+---
+
 ## 🗂️ API Overview
 
-| **Category**         | **API**                        | **Description**                                        |
-| -------------------- | ------------------------------ | ------------------------------------------------------ |
-| **Auth APIs**        | Login User                     | Authenticate with mobile + password; receive JWT token |
-|                      | Register User                  | Create a new account (default role: VIEWER)            |
-| **User APIs**        | Create User                    | Add a new user                                         |
-|                      | Get All Users                  | List all users (with optional pagination)              |
-|                      | Get User by ID                 | Retrieve specific user info                            |
-|                      | Update User Role               | Change user role (Admin only)                          |
-|                      | Update User Status             | Activate/deactivate account (Admin only)               |
-|                      | Delete User                    | Soft delete user (Admin only)                          |
-| **Transaction APIs** | Create Transaction             | Add new financial record (income/expense)              |
-|                      | Get All Transactions           | List transactions with filters/pagination              |
-|                      | Get Transaction by ID          | Fetch a specific transaction                           |
-|                      | Get Transactions by User ID    | Transactions of a user                                 |
-|                      | Get My Transactions            | Transactions of logged-in user                         |
-|                      | Get Transactions by Date Range | Filter by fromDate / toDate                            |
-|                      | Update Transaction             | Modify transaction details                             |
-|                      | Soft Delete Transaction        | Mark transaction as deleted                            |
-| **Dashboard APIs**   | Get Overall Summary            | System-wide aggregated statistics (Admin/Analyst)      |
-|                      | Get Overall Category Totals    | Category-wise totals across system                     |
-|                      | Get Overall Monthly Trends     | Monthly transaction trends (Admin/Analyst)             |
-|                      | Get Summary by User            | Aggregated data for specific user                      |
-|                      | Get Categories by User         | Category totals for a user                             |
-|                      | Get Monthly Trend by User      | Monthly trends for a user                              |
-|                      | Get My Summary                 | Personalized summary for logged-in user                |
-|                      | Get My Categories              | Category totals for logged-in user                     |
-|                      | Get My Trends                  | Monthly trends for logged-in user                      |
-|                      | Get My Recent                  | Latest transactions for logged-in user                 |
-|                      | Export CSV                     | Download transactions/summary as CSV                   |
-
+| **Category** | **API** | **Description** |
+|---|---|---|
+| **Auth APIs** | Login User | Authenticate with mobile + password; receive JWT token |
+| | Register User | Create a new account (default role: USER) |
+| **User APIs** | Create User | Add a new user |
+| | Get All Users | List all users |
+| | Get User by ID | Retrieve specific user info |
+| | Update User Role | Change user role (Admin only) |
+| | Update User Status | Activate/deactivate account (Admin only) |
+| | Delete User | Delete user (Admin only) |
+| **Transaction APIs** | Create Transaction | Add new financial record (income/expense) |
+| | Get All Transactions | List transactions with filters/pagination |
+| | Get Transaction by ID | Fetch a specific transaction |
+| | Get Transactions by User ID | Transactions of a specific user |
+| | Get My Transactions | Transactions of logged-in user |
+| | Get Transactions by Date Range | Filter by `fromDate` / `toDate` (User role) |
+| | Update Transaction | Modify transaction details |
+| | Soft Delete Transaction | Mark transaction as deleted |
+| **Dashboard APIs** | Get Overall Summary | System-wide aggregated statistics (Admin/Analyst) |
+| | Get Overall Category Totals | Category-wise totals across system |
+| | Get Overall Monthly Trends | Monthly transaction trends (Admin/Analyst) |
+| | Get Summary by User | Aggregated data for specific user |
+| | Get Categories by User | Category totals for a user |
+| | Get Monthly Trend by User | Monthly trends for a user |
+| | Get My Summary | Personalized summary for logged-in user |
+| | Get My Categories | Category totals for logged-in user |
+| | Get My Trends | Monthly trends for logged-in user |
+| | Get My Recent | Latest 10 transactions for logged-in user |
+| | Export CSV | Download transactions as CSV |
 
 ---
 
@@ -228,7 +283,7 @@ All errors follow a consistent format:
 | `401` | Missing or expired JWT token |
 | `403` | Authenticated but role is insufficient |
 | `404` | Resource not found |
-| `409` | Duplicate resource (e.g. email already registered) |
+| `409` | Duplicate resource (e.g. mobile already registered) |
 
 ```
 GlobalExceptionHandler (@RestControllerAdvice)
@@ -252,20 +307,16 @@ GlobalExceptionHandler (@RestControllerAdvice)
 
 ---
 
----
-
 ## 🚀 Future Improvements
 
 > Intentionally omitted to keep the submission clean and focused.
 
-- **Redis Cache** — Cache dashboard aggregations for high-read performance
-- **Structured Logging** — SLF4J + Logback with request tracing
 - **Spring Profiles** — `dev` / `prod` configs with PostgreSQL in production
-- **Spring AOP Programming — Cross-cutting concerns such as logging, transactions, and security via aspects.
-- **API Versioning — Support for multiple API versions to maintain backward compatibility.
+- **Spring AOP** — Cross-cutting concerns such as transactions and security via aspects
 - **Unit & Integration Tests** — JUnit 5 + Mockito service and controller coverage
 - **Swagger / OpenAPI** — Auto-generated interactive docs at `/swagger-ui.html`
 - **Docker** — `Dockerfile` + `docker-compose` for one-command deployment
+- **Redis Cache** — Cache dashboard aggregations for high-read performance
 
 ---
 
