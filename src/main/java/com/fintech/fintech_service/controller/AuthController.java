@@ -2,53 +2,35 @@ package com.fintech.fintech_service.controller;
 
 import com.fintech.fintech_service.dto.auth.AuthRequest;
 import com.fintech.fintech_service.dto.user.UserRequest;
-import com.fintech.fintech_service.security.util.JWTUtil;
-import com.fintech.fintech_service.service.UserService;
+import com.fintech.fintech_service.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final AuthenticationManager authenticationManager;
-    private final JWTUtil jwtUtil;
-    private final UserService userService;
+    private static final Logger log = LoggerFactory.getLogger(AuthController.class);
+
+    private final AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> generateToken(@RequestBody AuthRequest authReq) {
+    public ResponseEntity<?> login(@RequestBody AuthRequest authReq) {
 
-        // Authenticate (handles both user not found + wrong password)
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        authReq.getMobile(),
-                        authReq.getPassword()
-                )
-        );
-
-        String token = jwtUtil.generateToken(authReq.getMobile());
-
-        return ResponseEntity.ok(Map.of(
-                "message", "Login successful",
-                "token", token
-        ));
+        log.info("Login request received for mobile: {}", authReq.getMobile());
+        return ResponseEntity.ok(authService.login(authReq));
     }
 
     @PostMapping("/register")
     public ResponseEntity<?> registerNewUser(@RequestBody @Valid UserRequest registerReq) {
 
-        userService.create(registerReq);
-
-        return ResponseEntity.ok(Map.of(
-                "message", "Registration successful. Please login."
-        ));
+        log.info("Register request received for Mobile: {}", registerReq.getMobile());
+        return ResponseEntity.ok(authService.register(registerReq));
     }
 }
